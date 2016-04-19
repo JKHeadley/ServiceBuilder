@@ -1,0 +1,312 @@
+<#@ template debug="true" hostspecific="true" language="C#" #>
+<#@ assembly name="System.Data" #> 
+<#@ assembly name="System.Core" #> 
+<#@ assembly name="EnvDTE" #>
+<#@ import namespace="EnvDTE" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Data.SqlClient" #> 
+<#@ import namespace="System.Data" #> 
+<#@ import namespace="System.IO" #> 
+<#@ import namespace="System.Reflection" #> 
+<#@ import namespace="System.Collections.Generic" #> 
+<#@ import namespace="System.Reflection" #>
+<#@ import namespace="System.Text.RegularExpressions" #>
+<#@ assembly name="System.Windows.Forms.dll" #>
+<#@ import namespace="System.Windows.Forms" #>
+<#@ assembly name="%SERVICEDLL%" #>
+<#@ output extension=".txt" #> 
+<#@ include file="MultiOutput.tt" #>
+
+
+<# SaveOutput("GenerateService.txt");#>
+<# GenerateService(); #>
+<# DeleteOldOutputs(); #>
+<#+
+void GenerateService()
+{
+	//MessageBox.Show("woop");
+	string solutionName = GetSolutionName();
+	string nameSpace = solutionName + ".Service.Helpers";
+	List<CodeClass> classes = FindClasses(nameSpace, "Helper", null);
+
+#>
+using <#= solutionName #>.Service.Helpers;
+using <#= solutionName #>.Model;
+using <#= solutionName #>.Repository;
+using <#= solutionName #>.Service.DTOs;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Runtime.Serialization;
+using System.ServiceModel;
+using System.Text;
+using System.Transactions;
+using Castle.Windsor;
+using Castle.Windsor.Installer;
+
+namespace <#= solutionName #>.Service
+{
+    public class Service : IService
+    {
+        private IDTOMapper _dtoMapper;
+<#+  
+    foreach (var _class in classes) 
+    { 
+		string className = _class.Name;
+		string helperObject = Char.ToLowerInvariant(_class.Name[0]) + _class.Name.Substring(1);
+
+#>
+		private I<#=className#> _<#=helperObject#>;
+<#+
+    }
+#>
+
+        public Service(IDTOMapper dtoMapper, <#+  
+	int count = 1;
+    foreach (var _class in classes) 
+    { 
+		string className = _class.Name;
+		string helperObject = Char.ToLowerInvariant(_class.Name[0]) + _class.Name.Substring(1);
+
+#>I<#=className#> <#=helperObject#><#+if (count < classes.Count){#>, <#+}#><#+if (count %3 == 0){#> 
+					   <#+}#>
+<#+
+		count++;
+	}
+#>)
+        {
+			_dtoMapper = dtoMapper;
+<#+  
+    foreach (var _class in classes) 
+    { 
+		string className = _class.Name;
+		string helperObject = Char.ToLowerInvariant(_class.Name[0]) + _class.Name.Substring(1);
+
+#>			_<#=helperObject#> = <#=helperObject#>;
+<#+
+    }
+#>
+        }
+
+
+<#+  
+    foreach (var _class in classes) 
+    { 
+		string helperObject = "_" + Char.ToLowerInvariant(_class.Name[0]) + _class.Name.Substring(1);
+		var functions = GetMethods(_class);
+		foreach (CodeFunction function in functions)
+        {
+			if (function.Name != _class.Name)
+            {
+				string parameterName = "";
+				string parameterTypeName = "";
+				bool mapParameter = false;
+				string mappedParameterType = "";
+				var parameter = GetParameters(function).FirstOrDefault();
+				if (parameter != null)
+				{
+					parameterName = parameter.Name;
+					if (parameter.Type.AsString.Contains(solutionName + ".Model"))
+                    {
+						parameterTypeName = GetTypeName(parameter.Type.AsString) + "DTO";
+						mappedParameterType = GetTypeName(parameter.Type.AsString);
+						mapParameter = true;
+                    }
+					else
+                    {
+						parameterTypeName = parameter.Type.AsString;
+                    }
+				}
+				string typeName = function.Type.AsString;
+				string returnObject = typeName;
+				string needsMapping = "none";
+				string mappedType = "";
+				if (function.Type.AsString.Contains("IEnumerable"))
+				{
+					typeName = GetGenericTypeName(function.Type.AsString) + "DTO";
+					mappedType = GetGenericTypeName(function.Type.AsString);
+					returnObject = Char.ToLowerInvariant(mappedType[0]) + mappedType.Substring(1);
+					typeName = "IEnumerable<" + typeName + ">";
+					needsMapping = "many";
+				}
+				else if (function.Type.AsString.Contains(solutionName + ".Model"))
+				{
+					typeName = GetTypeName(function.Type.AsString) + "DTO";
+					mappedType = GetTypeName(function.Type.AsString);
+					returnObject = Char.ToLowerInvariant(mappedType[0]) + mappedType.Substring(1);
+					needsMapping = "one";
+				}
+	#>
+		public <#=typeName#> <#=function.Name#>(<#=parameterTypeName#> <#=parameterName#>)
+		{
+<#+if (needsMapping == "one"){#>
+<#+if (mapParameter == true){#>
+			var <#=returnObject#> = <#=helperObject#>.<#=function.Name#>(_dtoMapper.MapDTOTo<#=mappedParameterType#>(<#=parameterName#>));
+<#+} else{#>
+			var <#=returnObject#> = <#=helperObject#>.<#=function.Name#>(<#=parameterName#>);
+<#+}#>
+			return _dtoMapper.Map<#=mappedType#>ToDTO(<#=returnObject#>);
+		}
+<#+} else if (needsMapping == "none"){#>
+			return <#=helperObject#>.<#=function.Name#>(<#=parameterName#>);
+		}
+<#+} else if (needsMapping == "many"){#>
+			var <#=returnObject#>s = <#=helperObject#>.<#=function.Name#>(<#=parameterName#>);
+			return <#=returnObject#>s.Select(e => _dtoMapper.Map<#=mappedType#>ToDTO(e));
+		}
+<#+}#>
+<#+
+			
+            }
+        }
+	}
+#>
+
+    }
+}
+
+
+
+<#+  
+    string fileName = "Service.svc.cs";
+	SaveOutput(fileName);
+#>
+	 
+<#+
+}
+#>
+
+<#+ 
+string GetGenericTypeName(string typeName)
+{
+	Regex regex = new Regex(@"(?<=\.)[^\.]+(?=>)");
+	Match match = regex.Match(typeName);
+	if (match.Success)
+	{
+	    return match.Value;
+	}
+	return "nope";
+}
+
+string GetTypeName(string typeName)
+{
+	int i = typeName.LastIndexOf('.');
+	return typeName.Substring(i + 1);
+}
+
+private string GetSolutionName()
+    {
+        IServiceProvider hostServiceProvider = (IServiceProvider)Host;
+        if (hostServiceProvider == null)
+            throw new Exception("Host property returned unexpected value (null)");
+
+        EnvDTE.DTE dte = (EnvDTE.DTE)hostServiceProvider.GetService(typeof(EnvDTE.DTE));
+        if (dte == null)
+            throw new Exception("Unable to retrieve EnvDTE.DTE");
+
+        var solutionName = Path.GetFileNameWithoutExtension(dte.Solution.FullName);
+
+		return solutionName;
+    }
+
+private List<CodeClass> FindClasses(string nameSpace, string className, string baseClassName)
+{
+    List<CodeClass> result=new List<CodeClass>();
+    FindClasses(__getTemplateProject().CodeModel.CodeElements,className,baseClassName,nameSpace,result,false);
+    return result;
+
+}
+
+private void FindClasses(CodeElements elements, string className,string baseClassName,string searchNamespace,List<CodeClass> result,bool isNamespaceOk)
+{
+    if (elements==null)return;
+    foreach (CodeElement element in elements)
+    {       
+        if(element is CodeNamespace)
+        {
+            CodeNamespace ns = element as CodeNamespace;
+			//MessageBox.Show(ns.FullName);
+            if(ns != null)
+            {
+                if (ns.FullName == searchNamespace)
+                    FindClasses(ns.Members, className,baseClassName,searchNamespace,result,true);
+                else
+                    FindClasses(ns.Members, className,baseClassName,searchNamespace,result,false);
+            }
+        }
+        else if(element is CodeClass && isNamespaceOk)
+        {
+            CodeClass c = element as CodeClass;
+            if (c != null)
+            {
+				//WriteToOutput(c.FullName);
+				//MessageBox.Show(c.FullName);
+                if(c.FullName.Contains(className) && (baseClassName==null || (HasIt(c.Bases ,baseClassName) && c.Name != baseClassName)))
+                    result.Add(c);
+
+                FindClasses(c.Members, className,baseClassName,searchNamespace,result,true);
+            }
+
+        }
+    }
+}
+
+private List<CodeFunction> GetMethods(CodeClass _class)
+{
+	List<CodeFunction> functions = new List<CodeFunction>();
+	var elements = _class.Members;
+	foreach (CodeElement element in elements)
+    {
+		if(element is CodeFunction)
+		{
+			CodeFunction func = element as CodeFunction;
+			functions.Add(func);
+		}
+    }
+	return functions;
+}
+
+private List<CodeParameter> GetParameters(CodeFunction function)
+{
+	List<CodeParameter> parameters = new List<CodeParameter>();
+	var elements = function.Parameters;
+	foreach (CodeElement element in elements)
+    {
+		if(element is CodeParameter)
+		{
+			CodeParameter param = element as CodeParameter;
+			parameters.Add(param);
+		}
+    }
+	return parameters;
+}
+
+private bool HasIt(CodeElements elements,string name)
+{
+    foreach (CodeElement element in elements)
+    {
+        if (element.Name==name)
+            return true;
+    }
+    return false;
+}
+
+private void WriteToOutput(string output)
+{
+	IServiceProvider hostServiceProvider = (IServiceProvider)Host;
+    if (hostServiceProvider == null)
+        throw new Exception("Host property returned unexpected value (null)");
+
+    EnvDTE.DTE dte = (EnvDTE.DTE)hostServiceProvider.GetService(typeof(EnvDTE.DTE));
+    if (dte == null)
+        throw new Exception("Unable to retrieve EnvDTE.DTE");
+
+	var window = dte.Windows.Item(EnvDTE.Constants.vsWindowKindOutput);
+	var outputWindow = (OutputWindow) window.Object;
+	outputWindow.ActivePane.Activate();
+
+	outputWindow.ActivePane.OutputString(output);
+	outputWindow.ActivePane.OutputString("\n");
+}
+
+#>

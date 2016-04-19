@@ -1,0 +1,157 @@
+<#@ template debug="true" hostspecific="true" language="C#" #>
+<#@ assembly name="System.Data" #> 
+<#@ assembly name="System.Core" #> 
+<#@ assembly name="EnvDTE" #>
+<#@ import namespace="EnvDTE" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Data.SqlClient" #> 
+<#@ import namespace="System.Data" #> 
+<#@ import namespace="System.IO" #> 
+<#@ import namespace="System.Reflection" #> 
+<#@ import namespace="System.Collections.Generic" #> 
+<#@ import namespace="System.Reflection" #>
+<#@ assembly name="System.Windows.Forms.dll" #>
+<#@ import namespace="System.Windows.Forms" #>
+<#@ output extension=".txt" #> 
+<#@ include file="MultiOutput.tt" #>
+
+
+<# SaveOutput("GenerateHelpersInstaller.txt");#>
+<# GenerateServiceInstaller(); #>
+<# DeleteOldOutputs(); #>
+<#+
+void GenerateServiceInstaller()
+{
+#>
+using Castle.MicroKernel.Registration;
+using Castle.MicroKernel.SubSystems.Configuration;
+using Castle.Facilities.WcfIntegration;
+using Castle.Windsor;
+using System;
+using System.Collections.Generic;
+using System.Data.Entity;
+using System.Linq;
+using System.Web;
+
+namespace %SERVICEBUILDER%.Service.Installers
+{
+    public class ServiceInstaller : IWindsorInstaller
+    {
+        public void Install(IWindsorContainer container, IConfigurationStore store)
+        {
+            container.AddFacility<WcfFacility>();
+
+            // .Hosted() tells IoC that someone else (IIS) will host the service
+            // Otherwise, Castle Windsor will try to setup hosting for the service
+            container.Register(
+                Component.For<IService>()
+                         .ImplementedBy<Service>()
+                         .AsWcfService(new DefaultServiceModel().Hosted())
+                         .IsDefault()
+                         .LifestylePerWcfOperation());
+	    container.Register(
+                Component.For<IDTOMapper>()
+                         .ImplementedBy<DTOMapper>()
+                         .LifestyleSingleton());
+        }
+    }
+}
+
+
+
+<#+  
+    string fileName = "ServiceInstaller.cs";
+	SaveOutput(fileName);
+#>
+	 
+<#+
+}
+#>
+
+<#+ 
+private string GetSolutionName()
+    {
+        IServiceProvider hostServiceProvider = (IServiceProvider)Host;
+        if (hostServiceProvider == null)
+            throw new Exception("Host property returned unexpected value (null)");
+
+        EnvDTE.DTE dte = (EnvDTE.DTE)hostServiceProvider.GetService(typeof(EnvDTE.DTE));
+        if (dte == null)
+            throw new Exception("Unable to retrieve EnvDTE.DTE");
+
+        var solutionName = Path.GetFileNameWithoutExtension(dte.Solution.FullName);
+
+		return solutionName;
+    }
+
+private List<CodeClass> FindClasses(string nameSpace, string className, string baseClassName)
+{
+    List<CodeClass> result=new List<CodeClass>();
+    FindClasses(__getTemplateProject().CodeModel.CodeElements,className,baseClassName,nameSpace,result,false);
+    return result;
+
+}
+
+private void FindClasses(CodeElements elements, string className,string baseClassName,string searchNamespace,List<CodeClass> result,bool isNamespaceOk)
+{
+    if (elements==null)return;
+    foreach (CodeElement element in elements)
+    {       
+        if(element is CodeNamespace)
+        {
+            CodeNamespace ns = element as CodeNamespace;
+			//MessageBox.Show(ns.FullName);
+            if(ns != null)
+            {
+                if (ns.FullName == searchNamespace)
+                    FindClasses(ns.Members, className,baseClassName,searchNamespace,result,true);
+                else
+                    FindClasses(ns.Members, className,baseClassName,searchNamespace,result,false);
+            }
+        }
+        else if(element is CodeClass && isNamespaceOk)
+        {
+            CodeClass c = element as CodeClass;
+            if (c != null)
+            {
+				//WriteToOutput(c.FullName);
+				//MessageBox.Show(c.FullName);
+                if(c.FullName.Contains(className) && (baseClassName==null || (HasIt(c.Bases ,baseClassName) && c.Name != baseClassName)))
+                    result.Add(c);
+
+                FindClasses(c.Members, className,baseClassName,searchNamespace,result,true);
+            }
+
+        }
+    }
+}
+
+private bool HasIt(CodeElements elements,string name)
+{
+    foreach (CodeElement element in elements)
+    {
+        if (element.Name==name)
+            return true;
+    }
+    return false;
+}
+
+private void WriteToOutput(string output)
+{
+	IServiceProvider hostServiceProvider = (IServiceProvider)Host;
+    if (hostServiceProvider == null)
+        throw new Exception("Host property returned unexpected value (null)");
+
+    EnvDTE.DTE dte = (EnvDTE.DTE)hostServiceProvider.GetService(typeof(EnvDTE.DTE));
+    if (dte == null)
+        throw new Exception("Unable to retrieve EnvDTE.DTE");
+
+	var window = dte.Windows.Item(EnvDTE.Constants.vsWindowKindOutput);
+	var outputWindow = (OutputWindow) window.Object;
+	outputWindow.ActivePane.Activate();
+
+	outputWindow.ActivePane.OutputString(output);
+	outputWindow.ActivePane.OutputString("\n");
+}
+
+#>

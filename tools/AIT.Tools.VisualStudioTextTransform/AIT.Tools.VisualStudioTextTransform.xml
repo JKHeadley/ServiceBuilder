@@ -1,0 +1,535 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>AIT.Tools.VisualStudioTextTransform</name>
+    </assembly>
+    <members>
+        <member name="T:AIT.Tools.VisualStudioTextTransform.CombiningVariableResolver">
+            <summary>
+            Combines the given resolvers
+            </summary>
+        </member>
+        <member name="T:AIT.Tools.VisualStudioTextTransform.IVariableResolver">
+            <summary>
+            Interface to resolve 'msbuild' variables.
+            </summary>
+        </member>
+        <member name="M:AIT.Tools.VisualStudioTextTransform.IVariableResolver.ResolveVariable(System.String)">
+            <summary>
+            Try to resolve the given variable (return a list of possible paths)
+            </summary>
+            <param name="variable"></param>
+            <returns></returns>
+        </member>
+        <member name="M:AIT.Tools.VisualStudioTextTransform.CombiningVariableResolver.#ctor(System.Collections.Generic.IEnumerable{AIT.Tools.VisualStudioTextTransform.IVariableResolver})">
+            <summary>
+            /
+            </summary>
+            <param name="resolvers"></param>
+        </member>
+        <member name="M:AIT.Tools.VisualStudioTextTransform.CombiningVariableResolver.#ctor(AIT.Tools.VisualStudioTextTransform.IVariableResolver,AIT.Tools.VisualStudioTextTransform.IVariableResolver)">
+            <summary>
+            /
+            </summary>
+            <param name="resolver1"></param>
+            <param name="resolver2"></param>
+        </member>
+        <member name="M:AIT.Tools.VisualStudioTextTransform.CombiningVariableResolver.ResolveVariable(System.String)">
+            <summary>
+            Try to resolve the given variable (return a list of possible paths)
+            </summary>
+            <param name="variable"></param>
+            <returns></returns>
+        </member>
+        <member name="T:AIT.Tools.VisualStudioTextTransform.DefaultVariableResolver">
+            <summary>
+            A default implementation of IVariableResolver returning simple paths.
+            </summary>
+        </member>
+        <member name="M:AIT.Tools.VisualStudioTextTransform.DefaultVariableResolver.#ctor(System.String,System.String,System.String)">
+            <summary>
+            /
+            </summary>
+            <param name="projectDir"></param>
+            <param name="solutionDir"></param>
+            <param name="targetDir"></param>
+        </member>
+        <member name="M:AIT.Tools.VisualStudioTextTransform.DefaultVariableResolver.CreateFromDte(EnvDTE80.DTE2,System.String)">
+            <summary>
+            Create a default instance by fetching the paths from the solution.
+            </summary>
+            <param name="dte"></param>
+            <param name="templateFile"></param>
+            <returns></returns>
+        </member>
+        <member name="M:AIT.Tools.VisualStudioTextTransform.DefaultVariableResolver.WithTargetDir(System.String)">
+            <summary>
+            Return a new instance with a changed TargetDir.
+            </summary>
+            <param name="targetDir"></param>
+            <returns></returns>
+        </member>
+        <member name="M:AIT.Tools.VisualStudioTextTransform.DefaultVariableResolver.SimpleResolveVariable(System.String)">
+            <summary>
+            The simple resolution strategy of this instance.
+            </summary>
+            <param name="variable"></param>
+            <returns></returns>
+        </member>
+        <member name="M:AIT.Tools.VisualStudioTextTransform.DefaultVariableResolver.ResolveVariable(System.String)">
+            <summary>
+            /
+            </summary>
+            <param name="variable"></param>
+            <returns></returns>
+        </member>
+        <member name="P:AIT.Tools.VisualStudioTextTransform.DefaultVariableResolver.TargetDir">
+            <summary>
+            /
+            </summary>
+        </member>
+        <member name="P:AIT.Tools.VisualStudioTextTransform.DefaultVariableResolver.SolutionDir">
+            <summary>
+            /
+            </summary>
+        </member>
+        <member name="P:AIT.Tools.VisualStudioTextTransform.DefaultVariableResolver.ProjectDir">
+            <summary>
+            /
+            </summary>
+        </member>
+        <member name="T:AIT.Tools.VisualStudioTextTransform.LogicalCallContextChange">
+            <summary>
+            Class to change the LogicalCallContext temporarily.
+            </summary>
+        </member>
+        <member name="M:AIT.Tools.VisualStudioTextTransform.LogicalCallContextChange.#ctor(System.String,System.Object)">
+            <summary>
+            /
+            </summary>
+            <param name="name"></param>
+            <param name="newValue"></param>
+        </member>
+        <member name="M:AIT.Tools.VisualStudioTextTransform.LogicalCallContextChange.Dispose">
+            <summary>
+            /
+            </summary>
+        </member>
+        <member name="T:AIT.Tools.VisualStudioTextTransform.Options">
+            <summary>
+            A options class for the Command-Line parser library.
+            </summary>
+        </member>
+        <member name="P:AIT.Tools.VisualStudioTextTransform.Options.TargetDir">
+            <summary>
+            An overwrite for the TargetDir msbuild variable.
+            </summary>
+        </member>
+        <member name="P:AIT.Tools.VisualStudioTextTransform.Options.TargetFile">
+            <summary>
+            Using this option limits execution to the specified file.
+            </summary>
+        </member>
+        <member name="T:AIT.Tools.VisualStudioTextTransform.Program">
+            <summary>
+            /
+            </summary>
+        </member>
+        <member name="M:AIT.Tools.VisualStudioTextTransform.Program.Main(System.String[])">
+            <summary>
+            /
+            </summary>
+            <param name="arguments"></param>
+            <returns></returns>
+        </member>
+        <member name="T:AIT.Tools.VisualStudioTextTransform.Properties.Resources">
+            <summary>
+              A strongly-typed resource class, for looking up localized strings, etc.
+            </summary>
+        </member>
+        <member name="P:AIT.Tools.VisualStudioTextTransform.Properties.Resources.ResourceManager">
+            <summary>
+              Returns the cached ResourceManager instance used by this class.
+            </summary>
+        </member>
+        <member name="P:AIT.Tools.VisualStudioTextTransform.Properties.Resources.Culture">
+            <summary>
+              Overrides the current thread's CurrentUICulture property for all
+              resource lookups using this strongly typed resource class.
+            </summary>
+        </member>
+        <member name="P:AIT.Tools.VisualStudioTextTransform.Properties.Resources.Program_Main_">
+            <summary>
+              Looks up a localized string similar to 	Error: {0}.
+            </summary>
+        </member>
+        <member name="P:AIT.Tools.VisualStudioTextTransform.Properties.Resources.Program_Main_Application_crashed_with___0_">
+            <summary>
+              Looks up a localized string similar to Application crashed with: {0}.
+            </summary>
+        </member>
+        <member name="P:AIT.Tools.VisualStudioTextTransform.Properties.Resources.Program_Main_Creating_VS_instance___">
+            <summary>
+              Looks up a localized string similar to Creating VS instance....
+            </summary>
+        </member>
+        <member name="P:AIT.Tools.VisualStudioTextTransform.Properties.Resources.Program_Main_Everything_worked_">
+            <summary>
+              Looks up a localized string similar to Everything worked!.
+            </summary>
+        </member>
+        <member name="P:AIT.Tools.VisualStudioTextTransform.Properties.Resources.Program_Main_FAILED_to_process___0__">
+            <summary>
+              Looks up a localized string similar to FAILED to process &quot;{0}&quot;.
+            </summary>
+        </member>
+        <member name="P:AIT.Tools.VisualStudioTextTransform.Properties.Resources.Program_Main_Finding_and_processing___tt_templates___">
+            <summary>
+              Looks up a localized string similar to Finding and processing all TextTransform templates....
+            </summary>
+        </member>
+        <member name="P:AIT.Tools.VisualStudioTextTransform.Properties.Resources.Program_Main_Opening__0_">
+            <summary>
+              Looks up a localized string similar to Opening {0}.
+            </summary>
+        </member>
+        <member name="P:AIT.Tools.VisualStudioTextTransform.Properties.Resources.Program_Main_the_file_path___0___is_either_invalid_or_doesn_t_exist_">
+            <summary>
+              Looks up a localized string similar to the file path &quot;{0}&quot; is either invalid or doesn&apos;t exist!.
+            </summary>
+        </member>
+        <member name="P:AIT.Tools.VisualStudioTextTransform.Properties.Resources.Program_Main_you_must_provide_a_solution_file">
+            <summary>
+              Looks up a localized string similar to you must provide a solution file.
+            </summary>
+        </member>
+        <member name="P:AIT.Tools.VisualStudioTextTransform.Properties.Resources.Program_ProcessTemplate_Processing___0_____">
+            <summary>
+              Looks up a localized string similar to Processing &quot;{0}&quot;....
+            </summary>
+        </member>
+        <member name="P:AIT.Tools.VisualStudioTextTransform.Properties.Resources.Program_ProcessTemplateInMemory_String_is_null_or_empty_or_file_doesn_t_exist_">
+            <summary>
+              Looks up a localized string similar to String is null or empty or file doesn&apos;t exist..
+            </summary>
+        </member>
+        <member name="P:AIT.Tools.VisualStudioTextTransform.Properties.Resources.VisualStudioTextTemplateHost_GetService_Returning_DTE_instance_">
+            <summary>
+              Looks up a localized string similar to Returning DTE instance..
+            </summary>
+        </member>
+        <member name="P:AIT.Tools.VisualStudioTextTransform.Properties.Resources.VisualStudioTextTemplateHost_GetService_Service_request_of_type___0_">
+            <summary>
+              Looks up a localized string similar to Service request of type: {0}.
+            </summary>
+        </member>
+        <member name="P:AIT.Tools.VisualStudioTextTransform.Properties.Resources.VisualStudioTextTemplateHost_ResolveAssemblyReference_Error__Could_not_load_Assembly___0_">
+            <summary>
+              Looks up a localized string similar to Error: Could not load Assembly: {0}.
+            </summary>
+        </member>
+        <member name="P:AIT.Tools.VisualStudioTextTransform.Properties.Resources.VisualStudioTextTemplateHost_ResolveAssemblyReference_we_could_load_the_given_assembly_but_cannot_resolve_it_to_a_path_">
+            <summary>
+              Looks up a localized string similar to we could load the given assembly but cannot resolve it to a path..
+            </summary>
+        </member>
+        <member name="P:AIT.Tools.VisualStudioTextTransform.Properties.Resources.VisualStudioTextTemplateHost_ResolveDirectiveProcessor_Processor_Directive_is_unknown_">
+            <summary>
+              Looks up a localized string similar to Processor Directive is unknown!.
+            </summary>
+        </member>
+        <member name="P:AIT.Tools.VisualStudioTextTransform.Properties.Resources.VisualStudioTextTemplateHost_ResolveParameterValue_the_directiveId_cannot_be_null">
+            <summary>
+              Looks up a localized string similar to the directiveId cannot be null.
+            </summary>
+        </member>
+        <member name="P:AIT.Tools.VisualStudioTextTransform.Properties.Resources.VisualStudioTextTemplateHost_ResolveParameterValue_the_parameterName_cannot_be_null">
+            <summary>
+              Looks up a localized string similar to the parameterName cannot be null.
+            </summary>
+        </member>
+        <member name="P:AIT.Tools.VisualStudioTextTransform.Properties.Resources.VisualStudioTextTemplateHost_ResolveParameterValue_the_processorName_cannot_be_null">
+            <summary>
+              Looks up a localized string similar to the processorName cannot be null.
+            </summary>
+        </member>
+        <member name="P:AIT.Tools.VisualStudioTextTransform.Properties.Resources.VisualStudioTextTemplateHost_ResolvePath_the_file_name_cannot_be_null">
+            <summary>
+              Looks up a localized string similar to the file name cannot be null.
+            </summary>
+        </member>
+        <member name="P:AIT.Tools.VisualStudioTextTransform.Properties.Resources.VisualStudioTextTemplateHost_ResolvePathPrivate_found__0_">
+            <summary>
+              Looks up a localized string similar to found {0}.
+            </summary>
+        </member>
+        <member name="P:AIT.Tools.VisualStudioTextTransform.Properties.Resources.VisualStudioTextTemplateHost_ResolvePathPrivate_resolving__0_">
+            <summary>
+              Looks up a localized string similar to resolving {0}.
+            </summary>
+        </member>
+        <member name="T:AIT.Tools.VisualStudioTextTransform.DteHelper">
+            <summary>
+            Helper class to fetch DTE instances.
+            </summary>
+        </member>
+        <member name="F:AIT.Tools.VisualStudioTextTransform.DteHelper.Source">
+            <summary>
+            /
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:AIT.Tools.VisualStudioTextTransform.DteHelper.CreateDteInstance">
+            <summary>
+            Tries to create a DTE instance.
+            First it tries to start a new Visual Studio instance and to fetch the DTE instance.
+            If that fails we fall back to creating the Instance via Activator.CreateInstance.
+            If possible we return the process-Id of the Visual Studio instance (or -1 otherwise).
+            
+            If something goes wrong no process is opened (i.e. this method cleans up the opened process) otherwise
+            the caller needs to take care about closing the Visual Studio instance.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:AIT.Tools.VisualStudioTextTransform.DteHelper.CleanupDteInstance(System.Int32,EnvDTE80.DTE2)">
+            <summary>
+            Cleanup the given DTE instance and kill the process after some timeout.
+            </summary>
+            <param name="processId"></param>
+            <param name="dte"></param>
+        </member>
+        <member name="T:AIT.Tools.VisualStudioTextTransform.TemplateNotPartOfSolutionException">
+            <summary>
+            Is thrown when the given template is not part of the given solution.
+            </summary>
+        </member>
+        <member name="M:AIT.Tools.VisualStudioTextTransform.TemplateNotPartOfSolutionException.#ctor">
+            <summary>
+            Initializes a new instance of the TemplateNotPartOfSolutionException class.
+            </summary>
+        </member>
+        <member name="M:AIT.Tools.VisualStudioTextTransform.TemplateNotPartOfSolutionException.#ctor(System.String)">
+            <summary>
+            Initializes a new instance of the TemplateNotPartOfSolutionException class.
+            </summary>
+            <param name="message"></param>
+        </member>
+        <member name="M:AIT.Tools.VisualStudioTextTransform.TemplateNotPartOfSolutionException.#ctor(System.String,System.Exception)">
+            <summary>
+            Initializes a new instance of the TemplateNotPartOfSolutionException class.
+            </summary>
+            <param name="message"></param>
+            <param name="innerException"></param>
+        </member>
+        <member name="M:AIT.Tools.VisualStudioTextTransform.TemplateNotPartOfSolutionException.#ctor(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
+            <summary>
+            Initializes a new instance of the TemplateNotPartOfSolutionException class.
+            </summary>
+            <param name="info"></param>
+            <param name="context"></param>
+        </member>
+        <member name="T:AIT.Tools.VisualStudioTextTransform.TemplateProcessor">
+            <summary>
+            /
+            </summary>
+        </member>
+        <member name="M:AIT.Tools.VisualStudioTextTransform.TemplateProcessor.ProcessTemplateInMemory(EnvDTE80.DTE2,System.String,AIT.Tools.VisualStudioTextTransform.IVariableResolver)">
+            <summary>
+            /
+            </summary>
+            <param name="dte"></param>
+            <param name="templateFileName"></param>
+            <param name="resolver"></param>
+            <returns></returns>
+        </member>
+        <member name="M:AIT.Tools.VisualStudioTextTransform.TemplateProcessor.ProcessTemplate(EnvDTE80.DTE2,System.String,AIT.Tools.VisualStudioTextTransform.Options)">
+            <summary>
+            /
+            </summary>
+            <param name="dte"></param>
+            <param name="templateFileName"></param>
+            <param name="options"></param>
+            <returns>null if we could not process the template and an error-collection of the compilation otherwise.</returns>
+        </member>
+        <member name="M:AIT.Tools.VisualStudioTextTransform.TemplateProcessor.ProcessSolution(System.String,AIT.Tools.VisualStudioTextTransform.Options)">
+            <summary>
+            /
+            </summary>
+            <param name="solutionFileName"></param>
+            <param name="options"></param>
+            <returns></returns>
+        </member>
+        <member name="T:AIT.Tools.VisualStudioTextTransform.VisualStudioTextTemplateHost">
+            <summary>
+            See https://msdn.microsoft.com/en-us/library/bb126579.aspx for more details
+            </summary>
+        </member>
+        <member name="M:AIT.Tools.VisualStudioTextTransform.VisualStudioTextTemplateHost.#ctor(System.String,EnvDTE80.DTE2,AIT.Tools.VisualStudioTextTransform.IVariableResolver)">
+            <summary>
+            /
+            </summary>
+            <param name="templateFile"></param>
+            <param name="dte"></param>
+            <param name="resolver"></param>
+        </member>
+        <member name="M:AIT.Tools.VisualStudioTextTransform.VisualStudioTextTemplateHost.LoadIncludeText(System.String,System.String@,System.String@)">
+            <summary>
+            The engine calls this method based on the optional include directive
+            if the user has specified it in the text template.
+            </summary>
+        </member>
+        <member name="M:AIT.Tools.VisualStudioTextTransform.VisualStudioTextTemplateHost.GetHostOption(System.String)">
+            <summary>
+            Called by the Engine to enquire about 
+            the processing options you require. 
+            If you recognize that option, return an 
+            appropriate value. 
+            Otherwise, pass back NULL.
+            </summary>
+        </member>
+        <member name="M:AIT.Tools.VisualStudioTextTransform.VisualStudioTextTemplateHost.ResolveAssemblyReference(System.String)">
+            <summary>
+            The engine calls this method to resolve assembly references used in
+            the generated transformation class project and for the optional 
+            assembly directive if the user has specified it in the text template.
+            This method can be called 0, 1, or more times.
+            </summary>
+        </member>
+        <member name="M:AIT.Tools.VisualStudioTextTransform.VisualStudioTextTemplateHost.ResolveDirectiveProcessor(System.String)">
+            <summary>
+            The engine calls this method based on the directives the user has 
+            specified in the text template.
+            This method can be called 0, 1, or more times.
+            </summary>
+        </member>
+        <member name="M:AIT.Tools.VisualStudioTextTransform.VisualStudioTextTemplateHost.ResolvePath(System.String)">
+            <summary>
+            A directive processor can call this method if a file name does not 
+            have a path.
+            The host can attempt to provide path information by searching 
+            specific paths for the file and returning the file and path if found.
+            This method can be called 0, 1, or more times.
+            </summary>
+        </member>
+        <member name="M:AIT.Tools.VisualStudioTextTransform.VisualStudioTextTemplateHost.ResolveParameterValue(System.String,System.String,System.String)">
+            <summary>
+            If a call to a directive in a text template does not provide a value
+            for a required parameter, the directive processor can try to get it
+            from the host by calling this method.
+            This method can be called 0, 1, or more times.
+            </summary>
+        </member>
+        <member name="M:AIT.Tools.VisualStudioTextTransform.VisualStudioTextTemplateHost.SetFileExtension(System.String)">
+            <summary>
+            /
+            </summary>
+            <param name="extension"></param>
+        </member>
+        <member name="M:AIT.Tools.VisualStudioTextTransform.VisualStudioTextTemplateHost.SetOutputEncoding(System.Text.Encoding,System.Boolean)">
+            <summary>
+            /
+            </summary>
+            <param name="encoding"></param>
+            <param name="fromOutputDirective"></param>
+        </member>
+        <member name="M:AIT.Tools.VisualStudioTextTransform.VisualStudioTextTemplateHost.LogErrors(System.CodeDom.Compiler.CompilerErrorCollection)">
+            <summary>
+            /
+            </summary>
+            <param name="errors"></param>
+        </member>
+        <member name="M:AIT.Tools.VisualStudioTextTransform.VisualStudioTextTemplateHost.ProvideTemplatingAppDomain(System.String)">
+            <summary>
+            /
+            </summary>
+            <param name="content"></param>
+            <returns></returns>
+        </member>
+        <member name="M:AIT.Tools.VisualStudioTextTransform.VisualStudioTextTemplateHost.GetService(System.Type)">
+            <summary>
+            /
+            </summary>
+            <param name="serviceType"></param>
+            <returns></returns>
+        </member>
+        <member name="P:AIT.Tools.VisualStudioTextTransform.VisualStudioTextTemplateHost.TemplateFile">
+            <summary>
+            Path and file name of the template currently processing
+            </summary>
+        </member>
+        <member name="P:AIT.Tools.VisualStudioTextTransform.VisualStudioTextTemplateHost.FileExtension">
+            <summary>
+            Default fall-back if not specified by the file
+            </summary>
+        </member>
+        <member name="P:AIT.Tools.VisualStudioTextTransform.VisualStudioTextTemplateHost.FileEncoding">
+            <summary>
+            Encoding of the Output file
+            </summary>
+        </member>
+        <member name="P:AIT.Tools.VisualStudioTextTransform.VisualStudioTextTemplateHost.Errors">
+            <summary>
+            /
+            </summary>
+        </member>
+        <member name="P:AIT.Tools.VisualStudioTextTransform.VisualStudioTextTemplateHost.StandardAssemblyReferences">
+            <summary>
+            /
+            </summary>
+        </member>
+        <member name="P:AIT.Tools.VisualStudioTextTransform.VisualStudioTextTemplateHost.StandardImports">
+            <summary>
+            /
+            </summary>
+        </member>
+        <member name="T:AIT.Tools.VisualStudioTextTransform.MessageFilter">
+            <summary>
+            Fix COM retry errors: http://www.viva64.com/en/b/0169/
+            </summary>
+        </member>
+        <member name="M:AIT.Tools.VisualStudioTextTransform.MessageFilter.#ctor">
+            <summary>
+            /
+            </summary>
+        </member>
+        <member name="M:AIT.Tools.VisualStudioTextTransform.MessageFilter.Dispose">
+            <summary>
+            /
+            </summary>
+        </member>
+        <member name="M:AIT.Tools.VisualStudioTextTransform.MessageFilter.Dispose(System.Boolean)">
+            <summary>
+            /
+            </summary>
+            <param name="isDisposing"></param>
+        </member>
+        <member name="M:AIT.Tools.VisualStudioTextTransform.MessageFilter.HandleInComingCall(System.Int32,System.IntPtr,System.Int32,System.IntPtr)">
+            <summary>
+            /
+            </summary>
+            <param name="dwCallType"></param>
+            <param name="threadIdCaller"></param>
+            <param name="dwTickCount"></param>
+            <param name="lpInterfaceInfo"></param>
+            <returns></returns>
+        </member>
+        <member name="M:AIT.Tools.VisualStudioTextTransform.MessageFilter.RetryRejectedCall(System.IntPtr,System.Int32,System.Int32)">
+            <summary>
+            /
+            </summary>
+            <param name="threadIDCallee"></param>
+            <param name="dwTickCount"></param>
+            <param name="dwRejectType"></param>
+            <returns></returns>
+        </member>
+        <member name="M:AIT.Tools.VisualStudioTextTransform.MessageFilter.MessagePending(System.IntPtr,System.Int32,System.Int32)">
+            <summary>
+            /
+            </summary>
+            <param name="threadIDCallee"></param>
+            <param name="dwTickCount"></param>
+            <param name="dwPendingType"></param>
+            <returns></returns>
+        </member>
+    </members>
+</doc>
