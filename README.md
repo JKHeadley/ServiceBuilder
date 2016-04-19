@@ -8,7 +8,7 @@ See the ServiceBuilderTest project for an example project to test installation: 
 This package is meant to be used as an extension to an Entity Framework code first model.  The ServiceBuilder package will build a
 service based on your model that will contain CRUD methods for all the model entities.  The service follows good design practices such
 as Inversion of Control (through Castle Windsor), a generic repository to abstract database interactions, helper methods to reduce the
-service size and abstract business logic, and DTOs to allow easy control over transferred data.  
+service size and abstract business logic, and DTOs to allow easy control over transferred data.  It also uses the decorator pattern to added a logging layer that automatically logs all CRUD events.
 
 #REQUIREMENTS:
 
