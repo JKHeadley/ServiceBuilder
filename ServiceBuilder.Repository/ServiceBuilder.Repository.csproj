@@ -50,10 +50,37 @@
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
+    <Reference Include="System.Configuration" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="I%SERVICEBUILDER%Repository.cs" />
     <Compile Include="%SERVICEBUILDER%Repository.cs" />
+    <Compile Include="LoggingDecorator.cs" />
+    <Compile Include="LoggingConfiguration_User.cs" />
+    <Compile Include="LoggingConfiguration_PrimaryKeys.cs" />
+    <Content Include="LoggingConfiguration.txt">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>LoggingConfiguration.tt</DependentUpon>
+    </Content>
+    <Content Include="LoggingConfiguration.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>LoggingConfiguration.txt</LastGenOutput>
+    </Content>
+    <Content Include="MultiOutput.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>MultiOutput.txt</LastGenOutput>
+    </Content>
+    <Content Include="MultiOutput.txt">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>MultiOutput.tt</DependentUpon>
+    </Content>
+  </ItemGroup><ItemGroup>
+    <ProjectReference Include="..\..\%SERVICEBUILDER%.Model\%SERVICEBUILDER%.Model.csproj">
+      <Project>{a967b6ed-91bf-4bc7-a556-642fa5fb4471}</Project>
+      <Name>%SERVICEBUILDER%.Model</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

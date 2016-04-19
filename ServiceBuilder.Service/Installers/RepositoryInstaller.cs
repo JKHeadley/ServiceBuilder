@@ -19,6 +19,10 @@ namespace %SERVICEBUILDER%.Service.Installers
                 .ImplementedBy<%SERVICEBUILDER%Context>()
                 .LifestyleSingleton());
 
+	    container.Register(Component.For<I%SERVICEBUILDER%Repository>()
+                .ImplementedBy<LoggingDecorator>()
+                .LifestyleSingleton());
+
             container.Register(Component.For<I%SERVICEBUILDER%Repository>()
                 .ImplementedBy<%SERVICEBUILDER%Repository>()
                 .LifestyleSingleton());

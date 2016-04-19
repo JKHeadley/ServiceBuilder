@@ -1,0 +1,411 @@
+<#@ template debug="true" hostspecific="true" language="C#" #>
+<#@ assembly name="System.Data" #> 
+<#@ assembly name="EnvDTE" #>
+<#@ import namespace="EnvDTE" #>
+<#@ import namespace="System.Data.SqlClient" #> 
+<#@ import namespace="System.Data" #> 
+<#@ import namespace="System.IO" #> 
+<#@ import namespace="System.Collections.Generic" #> 
+<#@ import namespace="System.Reflection" #>
+<#@ import namespace="System.ComponentModel" #>
+<#@ output extension=".txt" #> 
+<#@ assembly name="System.Windows.Forms.dll" #>
+<#@ import namespace="System.Windows.Forms" #>
+<#@ assembly name="%MODELDLL%" #>
+<#@ include file="MultiOutput.tt" #>
+
+
+<# SaveOutput("LoggingConfiguration.txt");#>
+<# GeneratePrimaryKeys(); #>
+<# GenerateUserConfig(); #>
+<# GeneratePrimaryKeys_cs(); #>
+<# GenerateUserConfig_cs(); #>
+<# DeleteOldOutputs(); #>
+
+
+
+
+<#+
+void GeneratePrimaryKeys()
+{
+	XmlDocument webConfig = new XmlDocument();
+	webConfig.Load(@"%SERVICE_PATH%\Web.config");
+	XmlNode root = webConfig.DocumentElement;
+	XmlNode primaryKeyNode = root.SelectSingleNode("LoggingConfiguration_PrimaryKeys");
+	foreach(var name in GetTableNames()) 
+    { 
+		XmlAttribute primaryKey = webConfig.CreateAttribute(name);
+		primaryKey.Value = GetTablePrimaryKey(name);
+		primaryKeyNode.Attributes.Append(primaryKey);
+    } 
+	webConfig.Save(@"%SERVICE_PATH%\Web.config");
+}
+#>
+
+<#+
+void GenerateUserConfig()
+{
+	//NOTE: tried using DTE to get attributes but it wasn't working so switched to using reflection (below)
+
+	//string solutionName = GetSolutionName();
+	//string nameSpace = solutionName + ".Model";
+	//List<CodeClass> classes = FindClasses(nameSpace, "", null);
+	//foreach(var _class in classes) 
+    //{ 
+	//	string name = _class.Name;
+	//	if (name != "__MigrationHistory" && name != solutionName + "Context")
+    //    {
+	//		//MessageBox.Show(name);
+	//		foreach (CodeAttribute attr in _class.Attributes)
+    //        {
+	//			var attrName = attr.Name;
+	//			//MessageBox.Show(attrName);
+    //        }
+    //    }
+    //}
+
+	// NOTE: A session can be used for global variables;
+	TextTemplatingSession session = new TextTemplatingSession();
+
+
+	XmlDocument webConfig = new XmlDocument();
+	webConfig.Load(@"%SERVICE_PATH%\Web.config");
+	XmlNode root = webConfig.DocumentElement;
+	XmlNode userNode = root.SelectSingleNode("LoggingConfiguration_User");
+
+	XmlAttribute assemblyName = webConfig.CreateAttribute("UserTypeAssemblyName");
+	assemblyName.Value = "%SERVICEBUILDER%.Model";
+	session["UserTypeAssemblyName"] = "%SERVICEBUILDER%.Model";
+	userNode.Attributes.Append(assemblyName);
+
+	var assem = Assembly.LoadFrom(@"%MODELDLL%");
+	foreach (Type type in assem.GetTypes())
+    {
+		var attrs = type.GetCustomAttributes();
+		foreach (var attr in attrs)
+        {
+			if (attr is DescriptionAttribute)
+            {
+				var descAttr = attr as DescriptionAttribute;
+				var attrName = descAttr.Description;
+				if (attrName == "User")
+                {
+					XmlAttribute typeName = webConfig.CreateAttribute("UserTypeFullName");
+					typeName.Value = type.FullName;
+					session["UserTypeFullName"] = type.FullName;
+					userNode.Attributes.Append(typeName);
+
+					XmlAttribute Id = webConfig.CreateAttribute("Id");
+					Id.Value = GetTablePrimaryKey(type.Name);
+					session["Id"] = Id.Value;
+					userNode.Attributes.Append(Id);
+
+					//MessageBox.Show(type.FullName);
+					var props = type.GetProperties();
+					foreach (var prop in props)
+                    {
+						var propAttrs = prop.GetCustomAttributes();
+						foreach (var propAttr in propAttrs)
+						{
+							if (propAttr is DescriptionAttribute)
+							{
+								descAttr = propAttr as DescriptionAttribute;
+								attrName = descAttr.Description;
+								if (attrName == "UserName")
+								{
+									//MessageBox.Show(prop.Name);
+									XmlAttribute userName = webConfig.CreateAttribute("UserName");
+									userName.Value = prop.Name;
+									session["UserName"] = prop.Name;
+									userNode.Attributes.Append(userName);
+                                }
+                            }
+
+                        }
+                    }
+                }
+            }
+        }
+    }
+	
+	webConfig.Save(@"%SERVICE_PATH%\Web.config");
+
+	// Set the global session to this local session;
+	var sessionHost = (ITextTemplatingSessionHost) this.Host;
+	sessionHost.Session = session;
+}
+#>
+
+<#+
+void GeneratePrimaryKeys_cs()
+{
+#>
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Configuration;
+
+namespace %SERVICEBUILDER%.Repository
+{
+    class LoggingConfiguration_PrimaryKeys : ConfigurationSection
+    {
+        private static LoggingConfiguration_PrimaryKeys instance = null;
+        private static object syncObject = new object();
+
+        public static LoggingConfiguration_PrimaryKeys Instance
+        {
+            get
+            {
+                lock (syncObject)
+                {
+                    if (instance == null)
+                    {
+                        instance = (LoggingConfiguration_PrimaryKeys)ConfigurationManager.GetSection("LoggingConfiguration_PrimaryKeys");
+                    }
+                }
+                return instance;
+            }
+        }
+
+		<#+  
+		foreach(var name in GetTableNames()) 
+		{
+		#>[ConfigurationProperty("<#= name #>", IsRequired = true)]
+		public string <#= name #>
+		{
+			get { return this["<#= name #>"].ToString(); }
+		}
+
+		<#+   
+		}  
+		#>
+    }
+}
+
+
+<#+ SaveOutput("LoggingConfiguration_PrimaryKeys.cs"); #>
+<#+
+}
+#>
+
+<#+
+void GenerateUserConfig_cs()
+{
+#>
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Configuration;
+
+namespace %SERVICEBUILDER%.Repository
+{
+    class LoggingConfiguration_User : ConfigurationSection
+    {
+        private static LoggingConfiguration_User instance = null;
+        private static object syncObject = new object();
+
+        public static LoggingConfiguration_User Instance
+        {
+            get
+            {
+                lock (syncObject)
+                {
+                    if (instance == null)
+                    {
+                        instance = (LoggingConfiguration_User)ConfigurationManager.GetSection("LoggingConfiguration_User");
+                    }
+                }
+                return instance;
+            }
+        }
+
+		[ConfigurationProperty("Id", IsRequired = true)]
+        public string Id
+        {
+            get { return this["Id"].ToString(); }
+        }
+
+        [ConfigurationProperty("UserTypeFullName", IsRequired = true)]
+        public string UserTypeFullName
+        {
+            get { return this["UserTypeFullName"].ToString(); }
+        }
+
+        [ConfigurationProperty("UserTypeAssemblyName", IsRequired = true)]
+        public string UserTypeAssemblyName
+        {
+            get { return this["UserTypeAssemblyName"].ToString(); }
+        }
+
+        [ConfigurationProperty("UserName", IsRequired = true)]
+        public string UserName
+        {
+            get { return this["UserName"].ToString(); }
+        }
+    }
+}
+
+
+<#+ SaveOutput("LoggingConfiguration_User.cs"); #>
+<#+
+}
+#>
+
+<#+ 
+string GetSolutionName()
+{
+    IServiceProvider hostServiceProvider = (IServiceProvider)Host;
+    if (hostServiceProvider == null)
+        throw new Exception("Host property returned unexpected value (null)");
+
+    EnvDTE.DTE dte = (EnvDTE.DTE)hostServiceProvider.GetService(typeof(EnvDTE.DTE));
+    if (dte == null)
+        throw new Exception("Unable to retrieve EnvDTE.DTE");
+
+    var solutionName = Path.GetFileNameWithoutExtension(dte.Solution.FullName);
+	return solutionName;
+}
+
+private List<CodeClass> FindClasses(string nameSpace, string className, string baseClassName)
+{
+    List<CodeClass> result=new List<CodeClass>();
+    FindClasses(__getTemplateProject().CodeModel.CodeElements,className,baseClassName,nameSpace,result,false);
+    return result;
+
+}
+
+private void FindClasses(CodeElements elements, string className,string baseClassName,string searchNamespace,List<CodeClass> result,bool isNamespaceOk)
+{
+    if (elements==null)return;
+    foreach (CodeElement element in elements)
+    {       
+        if(element is CodeNamespace)
+        {
+            CodeNamespace ns = element as CodeNamespace;
+			//MessageBox.Show(ns.FullName);
+            if(ns != null)
+            {
+                if (ns.FullName == searchNamespace)
+                    FindClasses(ns.Members, className,baseClassName,searchNamespace,result,true);
+                else
+                    FindClasses(ns.Members, className,baseClassName,searchNamespace,result,false);
+            }
+        }
+        else if(element is CodeClass && isNamespaceOk)
+        {
+            CodeClass c = element as CodeClass;
+            if (c != null)
+            {
+				//WriteToOutput(c.FullName);
+				//MessageBox.Show(c.FullName);
+                if(c.FullName.Contains(className) && (baseClassName==null || (HasIt(c.Bases ,baseClassName) && c.Name != baseClassName)))
+                    result.Add(c);
+
+                FindClasses(c.Members, className,baseClassName,searchNamespace,result,true);
+            }
+
+        }
+    }
+}
+
+private bool HasIt(CodeElements elements,string name)
+{
+    foreach (CodeElement element in elements)
+    {
+        if (element.Name==name)
+            return true;
+    }
+    return false;
+}
+
+IEnumerable<string> GetTableNames()
+{ 
+    var connectionString =  
+                    @"%CONNECTION_STRING%"; 
+ 
+    var commandText = "select table_name as TableName from  INFORMATION_SCHEMA.Tables"; 
+             
+    using(var connection = new SqlConnection(connectionString))         
+    { 
+        connection.Open(); 
+        using(var command = new SqlCommand(commandText, connection)) 
+        using(var reader = command.ExecuteReader()) 
+        { 
+            while (reader.Read()) 
+            {                                                 
+                yield return reader["TableName"] as string; 
+            }     
+        } 
+		connection.Dispose();
+    } 
+} 
+
+string GetTablePrimaryKey(string tableName)
+{ 
+    string cnString =  @"%CONNECTION_STRING%";
+    string ID = "";
+    SqlDataReader mReader;
+    using(SqlConnection mSqlConnection = new SqlConnection(cnString))
+    using(SqlCommand mSqlCommand = new SqlCommand("sp_pkeys", mSqlConnection))
+    {
+		//mSqlConnection = new SqlConnection(cnString);
+		mSqlConnection.Open();
+		// sp_pkeys is SQL Server default stored procedure
+		// you pass it only table Name, it will return
+		// primary key column
+		//mSqlCommand = new SqlCommand("sp_pkeys", mSqlConnection);
+		mSqlCommand.CommandType = CommandType.StoredProcedure; mSqlCommand.Parameters.Add
+						("@table_name", SqlDbType.NVarChar).Value = tableName;
+		mReader = mSqlCommand.ExecuteReader();
+		while (mReader.Read())
+		{
+			//the primary key column resides at index 4 
+			ID = mReader[3].ToString();
+		}
+		return ID;
+    }
+} 
+
+string GetProjectName()
+    {
+        var serviceProvider = Host as IServiceProvider;
+        if (serviceProvider == null) 
+        {
+            throw new Exception("Visual Studio host not found!");
+        }
+
+        DTE dte = serviceProvider.GetService(typeof(SDTE)) as DTE;
+
+        if (dte == null) 
+        {
+            throw new Exception("Visual Studio host not found!");
+        }
+
+        ProjectItem projectItem = dte.Solution.FindProjectItem(Host.TemplateFile);
+
+        Project prj = projectItem.ContainingProject;
+		string fileName = "$(ProjectDir)bin\\debug\\" + prj.Properties.Item("OutputFileName").Value;
+		string path = Host.ResolveAssemblyReference(fileName);
+		//Assembly asm = Assembly.LoadFrom(path);  //NOTE: The LoadFrom method locks the dll and prevents building
+		byte[] data;
+
+		using (var fs = File.OpenRead(path))
+		{
+			data = new byte[fs.Length];
+			fs.Read(data, 0, Convert.ToInt32(fs.Length));
+		}
+
+		if (data == null || data.Length == 0)
+		{
+			throw new ApplicationException("Failed to load " + path);
+		}
+
+		Assembly asm = Assembly.Load(data);
+		string assemblyName = asm.GetName().Name;
+		return assemblyName;
+    }
+ #>

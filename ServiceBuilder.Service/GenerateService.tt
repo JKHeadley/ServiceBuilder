@@ -106,7 +106,7 @@ namespace <#= solutionName #>.Service
 				if (parameter != null)
 				{
 					parameterName = parameter.Name;
-					if (parameter.Type.AsString.Contains(solutionName + ".Model"))
+					if (parameter.Type.AsString.Contains(solutionName + ".Model") && !parameter.Type.AsString.Contains("LogEventType"))
                     {
 						parameterTypeName = GetTypeName(parameter.Type.AsString) + "DTO";
 						mappedParameterType = GetTypeName(parameter.Type.AsString);
@@ -129,7 +129,7 @@ namespace <#= solutionName #>.Service
 					typeName = "IEnumerable<" + typeName + ">";
 					needsMapping = "many";
 				}
-				else if (function.Type.AsString.Contains(solutionName + ".Model"))
+				else if (function.Type.AsString.Contains(solutionName + ".Model") && !function.Type.AsString.Contains("LogEventType"))
 				{
 					typeName = GetTypeName(function.Type.AsString) + "DTO";
 					mappedType = GetTypeName(function.Type.AsString);

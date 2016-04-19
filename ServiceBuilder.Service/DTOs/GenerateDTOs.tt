@@ -15,10 +15,10 @@
 <#@ include file="MultiOutput.tt" #>
 
 <# SaveOutput("GenerateHelpers.txt");#>
-<# GenerateHelpers(); #>
+<# GenerateDTOs(); #>
 <# DeleteOldOutputs(); #>
 <#+
-void GenerateHelpers()
+void GenerateDTOs()
 {
 	
 	string solutionName = GetSolutionName();
@@ -33,6 +33,7 @@ void GenerateHelpers()
 #>
 using System.Collections.Generic;
 using System.Runtime.Serialization;
+using <#= solutionName #>.Model;
 
 namespace <#= solutionName #>.Service.DTOs
 {
@@ -50,7 +51,7 @@ namespace <#= solutionName #>.Service.DTOs
 				typeName = GetGenericTypeName(property.Type.AsString) + "DTO";
 				typeName = "IEnumerable<" + typeName + ">";
             }
-			else if (property.Type.AsString.Contains(solutionName + ".Model"))
+			else if (property.Type.AsString.Contains(solutionName + ".Model") && !property.Type.AsString.Contains("LogEventType"))
             {
 				typeName = GetTypeName(property.Type.AsString) + "DTO";
             }
