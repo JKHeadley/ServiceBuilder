@@ -54,7 +54,7 @@ For reasons currently unkown, sometimes the nuget package installation erases th
 - Install the nuget package onto your model project. Make sure to click "Discard" and "Reload All" when
 Visual Studio notifies you that changes have been made to the project outside the environment, and don't click "Restore" when Nuget
 alerts you of missing packages.  
-- Once the package installation is complete, clean the solution and build your model project.
+- Once the package installation is complete, clean the solution and build your model project (see the above note for some build errors).
 - Once the model builds succesfully, step through the two new Repository and Service projects, and execute the T4 (/*.tt) template files by 
 right-clicking and selecting "Run Custom Tool" (excluding any "MultiOutput.tt" files). The list of files needed to be run can be seen below.
 If at any point a file cannot be run (specifically once you reach "GenerateHelpersInstaller.tt"), build the solution and continue.
