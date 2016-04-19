@@ -2,14 +2,16 @@
 <package >
   <metadata>
     <id>ServiceBuilder</id>
-    <version>1.0</version>
+    <version>1.1</version>
     <title>Entity Framework Service Builder</title>
     <authors>Justin Headley</authors>
     <owners>Justin Headley</owners>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <licenseUrl>https://github.com/JKHeadley/ServiceBuilder/blob/master/LICENSE.txt</licenseUrl>
+    <projectUrl>https://github.com/JKHeadley/ServiceBuilder</projectUrl>
     <description>This package will install a service around an existing Entity Framework model.</description>
-    <releaseNotes>Summary of changes made in this release of the package.</releaseNotes>
-    <copyright>Copyright 2015</copyright>
+    <releaseNotes>Added logging.</releaseNotes>
+    <copyright>Copyright 2016</copyright>
     <tags>entity framework code first service ServiceBuilder</tags>
   </metadata>
 </package>
