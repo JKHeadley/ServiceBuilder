@@ -1,5 +1,6 @@
 # ServiceBuilder
 A nuget package that builds a service around an existing Entity Framework code first model.
+The nuget package can be found here: https://www.nuget.org/packages/ServiceBuilder/
 
 See the ServiceBuilderTest project for an example project to test installation: https://github.com/JKHeadley/ServiceBuilderTest
 
