@@ -45,6 +45,7 @@ Currently installation is a semi-manual process.  A fully automated installation
 complex and buggy.  The installation steps are as follows:
 
 ###NOTE: 
+
 ---
 For reasons currently unkown, sometimes the nuget package installation erases the content of random model files (but not the files themselves).  Given this, a backup copy of your solution folder is created as the first step in the nuget installation process.  I've found that it is pretty easy to just open any backup files for the "erased" files and copy the contents over.  At the end of the manual installation process, the `remove_templates` command will remove this backup copy.
 ---
