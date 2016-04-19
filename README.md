@@ -39,7 +39,7 @@ public class MyUser
 Currently installation is a semi-manual process.  A fully automated installation is in the works but the process is 
 complex and buggy.  The installation steps are as follows:
 
-- Install the nuget package onto your model project. Make sure to click "Discard" when
+- Install the nuget package onto your model project. Make sure to click "Discard" and "Reload All" when
 Visual Studio notifies you that changes have been made to the project outside the environment.  
 - Once the package installation is complete, clean the solution and build your model project.
 - Once the model builds succesfully, step through the two new Repository and Service projects, and execute the T4 (/*.tt) template files by 
