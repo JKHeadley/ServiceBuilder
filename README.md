@@ -75,3 +75,11 @@ along with any other extra files and the result should be clean service and repo
 - GenerateIDTOMapper.tt
 - GenerateIService.tt
 - GenerateService.tt
+
+
+# Inspiration:
+Entity Framework provides a great standard to create code-first database models.  However once the models are created
+there are a great many practices/patterns/techniqes/methods available to go about providing access to those models, 
+some of which are better than others.  This service builder is not only a tool to get a fully functional CRUD service 
+up and running quickly, it also implements and promotes good coding practices founded on modularity and separation of 
+concerns.
