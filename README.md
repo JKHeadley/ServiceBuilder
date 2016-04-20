@@ -80,6 +80,20 @@ along with any other extra files and the result should be clean service and repo
 # Inspiration:
 Entity Framework provides a great standard to create code-first database models.  However once the models are created
 there are a great many practices/patterns/techniqes/methods available to go about providing access to those models, 
-some of which are better than others.  This service builder is not only a tool to get a fully functional CRUD service 
-up and running quickly, it also implements and promotes good coding practices founded on modularity and separation of 
-concerns.
+some of which are better than others, and some of which aren't helpful at all. This can result in code that is overly complex and scales poorly.  In addition, having so many choices means its unlikely two projects will be structured similarly.  At my previous company we had multiple service projects being developed at the same time, with developers coming on and off projects and working on multiple projects simultaneously.  The lack of a standard structure resulted in high overhead for developers to get acquainted with a project.  This combined with less than efficient programming practices led to suboptimal productivity.
+
+This service builder is not only a tool to get a fully functional CRUD service 
+up and running quickly, it also implements and promotes good coding practices emphasizing modularity and separation of 
+concerns.  Specifically, the following patters are represented:
+
+- Dependency injection and Inversion of Control (IoC) via Castle Windsor: http://www.castleproject.org/projects/windsor/
+- Repository pattern: https://msdn.microsoft.com/en-us/library/ff649690.aspx
+- DTO pattern with built in mapping using AutoMapper: https://en.wikipedia.org/wiki/Data_transfer_object and http://automapper.org/
+- Helper methods to encapsulate business logic resulting in a lightweight service class
+- Decorator pattern implemented via a logging decorator that extends the repository pattern: http://www.dofactory.com/net/decorator-design-pattern
+
+I find the decorator pattern to be particularly impressive as it allows powerful functionality to be inserted into the data access layer (DAL) without altering any classes.  It is tightly integrated with the IoC and Repository patterns and is a testament to their utility.  
+
+The resulting structure promotes flexibility and scalability.  Custom business logic can smoothly be inserted into the helper methods.  The DTO classes allow for efficient control over remote interactions, including control over the transfer of sensitive data.  The decorator pattern allows for the DAL functionality to be easily extended.  For example, a caching decorator could be inserted alongside the logging decorator that would provide caching functionality for service transactions.  
+
+Hopefully these tools will be of some use to the community.  Please create an issue for any questions, comments, or feature requests and I will try to respond.  And of course feel free to submit pull requests and contribute to the project.
