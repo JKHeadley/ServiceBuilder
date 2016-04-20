@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>ServiceBuilder</id>
-    <version>1.1</version>
+    <version>1.1.1</version>
     <title>Entity Framework Service Builder</title>
     <authors>Justin Headley</authors>
     <owners>Justin Headley</owners>
@@ -10,8 +10,16 @@
     <licenseUrl>https://github.com/JKHeadley/ServiceBuilder/blob/master/LICENSE.txt</licenseUrl>
     <projectUrl>https://github.com/JKHeadley/ServiceBuilder</projectUrl>
     <description>This package will install a service around an existing Entity Framework model.</description>
-    <releaseNotes>Added logging.</releaseNotes>
+	<summary>
+		This package is meant to be used as an extension to an Entity Framework code first model. The ServiceBuilder package will build a service based on your model that will contain CRUD methods for all the model entities. The service follows good design practices such as Inversion of Control (through Castle Windsor), a generic repository to abstract database interactions, helper methods to reduce the service size and abstract business logic, and DTOs to allow easy control over transferred data. It also uses the decorator pattern to add a logging layer that automatically logs all CRUD events.  For installation instructions please reference: 
+
+		https://github.com/JKHeadley/ServiceBuilder 
+	</summary>
+    <releaseNotes>Updated package details.</releaseNotes>
     <copyright>Copyright 2016</copyright>
-    <tags>entity framework code first service ServiceBuilder</tags>
+    <tags>entity framework code first service ServiceBuilder decorator repository IoC EntityFramework</tags>
+	<dependencies>
+		<dependency id="EntityFramework"/>
+	</dependencies>
   </metadata>
 </package>
