@@ -97,3 +97,6 @@ I find the decorator pattern to be particularly impressive as it allows powerful
 The resulting structure promotes flexibility and scalability.  Custom business logic can smoothly be inserted into the helper methods.  The DTO classes allow for efficient control over remote interactions, including control over the transfer of sensitive data.  The decorator pattern allows for the DAL functionality to be easily extended.  For example, a caching decorator could be inserted alongside the logging decorator that would provide caching functionality for service transactions.  
 
 Hopefully these tools will be of some use to the community.  Please create an issue for any questions, comments, or feature requests and I will try to respond.  And of course feel free to submit pull requests and contribute to the project.
+
+#Contributing
+Please reference the contributing doc: https://github.com/JKHeadley/ServiceBuilder/blob/master/CONTRIBUTING.md
