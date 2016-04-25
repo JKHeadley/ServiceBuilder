@@ -56,7 +56,7 @@ Visual Studio notifies you that changes have been made to the project outside th
 alerts you of missing packages.  
 - Once the package installation is complete, clean the solution and build your model project (see the above note for some build errors).
 - Once the model builds succesfully, step through the two new Repository and Service projects, and execute the T4 (/*.tt) template files by 
-right-clicking and selecting "Run Custom Tool" (excluding any "MultiOutput.tt" files). The list of files needed to be run can be seen below.
+right-clicking and selecting "Run Custom Tool" (do *NOT* run any of the "MultiOutput.tt" files). The list of files needed to be run can be seen below.
 If at any point a file cannot be run (specifically once you reach "GenerateHelpersInstaller.tt"), build the solution and continue.
 - Once all of the T4 templates have been executed, build the solution again.
 - If the solution builds succesfully, run the command `remove_templates` in the Package Manager Console.  This should remove all the T4 templates
