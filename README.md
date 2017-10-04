@@ -4,14 +4,14 @@ The nuget package can be found here: https://www.nuget.org/packages/ServiceBuild
 
 See the ServiceBuilderTest project for an example project to test installation: https://github.com/JKHeadley/ServiceBuilderTest
 
-#SUMMARY:
+# SUMMARY:
 
 This package is meant to be used as an extension to an Entity Framework code first model.  The ServiceBuilder package will build a
 service based on your model that will contain CRUD methods for all the model entities.  The service follows good design practices such
 as Inversion of Control (through Castle Windsor), a generic repository to abstract database interactions, helper methods to reduce the
 service size and abstract business logic, and DTOs to allow easy control over transferred data.  It also uses the decorator pattern to add a logging layer that automatically logs all CRUD events (including errors).
 
-#REQUIREMENTS:
+# REQUIREMENTS:
 
 The main requirements for this package to install correctly is that a code first model exists and a naming convention is followed.
 This convention centers around the solution name.  For a given solution name, %SOLUTION\_NAME%, the project containing the model must
@@ -23,7 +23,7 @@ For example:
 - Project name/namespace 	= "SuperMarket.Model"
 - Context name 				= "SuperMarketContext"
 
-##Other requirements:
+## Other requirements:
 - The %SOLUTION\_NAME%Context class implementing DbContext must be partial.
 - The class implementing the user type for the system must have an attribute of [Description("User")]
 - The name/username property for the user class must have an attribute of [Description("UserName")]
@@ -39,13 +39,13 @@ public class MyUser
 }
 ```
 
-#INSTALLATION:
+# INSTALLATION:
 
 
 Currently installation is a semi-manual process.  A fully automated installation is in the works but the process is 
 complex and buggy.  The installation steps are as follows:
 
-###NOTE: 
+### NOTE: 
 
 ---
 For reasons currently unkown, sometimes the nuget package installation erases the content of random model files (but not the files themselves).  Given this, a backup copy of your solution folder is created as the first step in the nuget installation process.  I've found that it is pretty easy to just open any backup files for the "erased" files and copy the contents over.  At the end of the manual installation process, the `remove_templates` command will remove this backup copy.
@@ -65,7 +65,7 @@ along with any other extra files and the result should be clean service and repo
 - Installation is complete, you now have a fully functional CRUD service for your model.
    
 
-##T4 Templates to Execute
+## T4 Templates to Execute
 - LoggingConfiguration.tt
 - GenerateDTOs.tt
 - GenerateHelpers.tt
@@ -98,5 +98,5 @@ The resulting structure promotes flexibility and scalability.  Custom business l
 
 Hopefully these tools will be of some use to the community.  Please create an issue for any questions, comments, or feature requests and I will try to respond.  And of course feel free to submit pull requests and contribute to the project.
 
-#Contributing
+# Contributing
 Please reference the contributing doc: https://github.com/JKHeadley/ServiceBuilder/blob/master/CONTRIBUTING.md
